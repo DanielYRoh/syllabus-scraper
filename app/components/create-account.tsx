@@ -3,13 +3,14 @@
 import { useActionState } from 'react';
 import { authenticate } from '@/lib/actions';
 import { useSearchParams } from 'next/navigation';
+import { newUser } from '../lib/actions';
 
 export default function () {
 
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
     const [errorMessage, formAction, isPending] = useActionState(
-        authenticate,
+        newUser,
         undefined,
     );
     return (
@@ -21,11 +22,18 @@ export default function () {
                         </div>
 
                         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm text-gray-100">
-                            <form className="space-y-6" method="POST">
+                            <form action={formAction}className="space-y-6">
                                 <div>
-                                    <label htmlFor="studentid" className="block text-sm/6 font-medium text-gray-500">Student ID</label>
+                                    <label htmlFor="name" className="block text-sm/6 font-medium text-gray-500">Name</label>
                                     <div className="mt-2">
-                                        <input type="studentid" name="studentid" id="studentid" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                                        <input type="text" name="name" id="name" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="username" className="block text-sm/6 font-medium text-gray-500">Student ID</label>
+                                    <div className="mt-2">
+                                        <input type="text" name="username" id="username" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
                                     </div>
                                 </div>
 

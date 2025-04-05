@@ -3,11 +3,11 @@ import { Suspense } from "react"
 export default function Login() {
 
     return (
+      <div>
         <Suspense>
-            <div>
             <CreateAccount />
-            </div>
         </Suspense>
+      </div>
     )
 
 }
