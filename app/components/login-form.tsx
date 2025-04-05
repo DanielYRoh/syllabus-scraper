@@ -21,7 +21,7 @@ export default function LoginForm() {
                         </div>
 
                         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm text-gray-100">
-                            <form action={formAction} className="space-y-6" action="#" method="POST">
+                            <form action={formAction} className="space-y-6" method="POST">
                                 <div>
                                     <label htmlFor="email" className="block text-sm/6 font-medium text-gray-500">Username</label>
                                     <div className="mt-2">
