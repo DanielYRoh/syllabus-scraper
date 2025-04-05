@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { Funnel_Sans } from 'next/font/google';
+
+const funnelSans = Funnel_Sans({
+  subsets: ['latin'],
+  display: 'swap',   
+});
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,10 +32,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${funnelSans.className} antialiased`}
       >
         {children}
       </body>
     </html>
   );
+
 }
+
