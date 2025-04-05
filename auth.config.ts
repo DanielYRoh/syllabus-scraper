@@ -4,7 +4,7 @@ export const authConfig = {
     // future probably need to create a "Create Account" for this
     pages: {
         signIn: "/login",
-        newUser: "/login/create-account"
+        newUser: "/create-account"
     },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
