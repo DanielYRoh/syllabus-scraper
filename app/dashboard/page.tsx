@@ -1,4 +1,5 @@
-import { signOut } from "@/auth";
+import { signOut } from "@/auth"
+import DynamicBox from "@/app/components/dynamic-box"
 export default function Dashboard(){
     return (
         <div>
@@ -11,6 +12,7 @@ export default function Dashboard(){
                 <button> Sign out</button>
 
             </form>
+            
             <div className="flex items-center justify-center w-full">
                 <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -24,29 +26,9 @@ export default function Dashboard(){
                 </label>
             </div>
 
-            <div className="bg-gray-100 min-h-screen p-6">
-                {/* Header */}
-                <header className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-bold">My Syllabi</h1>
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
-                    + New
-                    </button>
-                </header>
+            <DynamicBox />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {['CMPE-30', 'BIO-10', 'CALC-2'].map((file, index) => (
-                    <div key={index} className="bg-white p-4 rounded-lg shadow hover:shadow-md transition">
-                        <div className="flex items-center justify-center h-[120px] bg-gray-100 rounded-lg mb-4">
-                        <span className={`text-${index === 2 ? 'green' : 'blue'}-400 text-xl`}>
-                            {index === 2 ? '📊' : '📄'}
-                        </span>
-                        </div>
-                        <h2 className="text-sm font-medium text-gray-700 truncate">{file}</h2>
-                    </div>
-                ))}
-                </div>
-            </div>
+            
         </div> 
-
-    )
+    );
 }
