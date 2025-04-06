@@ -55,6 +55,41 @@ export async function createUser(formData : FormData) :  Promise<boolean | undef
       
 }
 
+export async function addPDF(username: string, pdf: string){
+  try{
+    await sql`
+    INSERT INTO syllabi (username, userdata)
+    VALUES (${username}, ${sql.json([JSON.parse(pdf)])})
+    ON CONFLICT (username) 
+    DO UPDATE SET
+      userdata = jsonb_set(
+        COALESCE(syllabi.userdata, '[]'::jsonb), 
+        '{-1}', 
+        ${sql.json(JSON.parse(pdf))}, 
+        true
+      )
+  `;
+  } catch (error) {
+    console.error('Error executing query:', error);
+  }
+}
+
+export async function getPDFS(username: string){
+  try {
+    const username = 'john_doe';
+  
+    const result = await sql`
+      SELECT userdata
+      FROM syllabi
+      WHERE username = ${username}
+    `;
+  
+    console.log('User Data:', result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+  }
+  
+}
 
 export const { auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -80,4 +115,5 @@ export const { auth, signIn, signOut } = NextAuth({
         }),
 
     ],
+    
 });

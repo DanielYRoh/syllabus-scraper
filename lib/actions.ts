@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, createUser } from "@/auth";
+import { signIn, createUser, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function authenticate(
@@ -22,16 +22,21 @@ export async function authenticate(
     }
 }
 
-export async function sendPDF(formData: FormData){
-    console.log(formData)
+export async function signOutHelper(){
+    await signOut({ redirectTo: "/" });
+}
 
+export async function sendPDF(previousState: string | undefined, formData: FormData){
+    const username = await formData.get("username") as string;
     const userPDF = await formData.get("dropzone-file") as File;
-    console.log(userPDF)
+    console.log(userPDF, username)
     const sendFormData = new FormData()
     sendFormData.append('file', userPDF)
 
+    
+
     try {
-        const response = await fetch("https://3553-130-212-147-97.ngrok-free.app/extract-pdf", {
+        const response = await fetch("https://2e95-130-212-147-97.ngrok-free.app/extract-pdf", {
             method: "POST",
             body: sendFormData,
         })
@@ -39,8 +44,8 @@ export async function sendPDF(formData: FormData){
             throw new Error("HTTP ERROR!")
         }
         const data = await response.json();
+        return JSON.stringify(data)
 
-        console.log(data)
     } catch (error){
         console.error(error)
     }
@@ -65,3 +70,4 @@ export async function newUser(prevState: string | undefined, formData: FormData)
 
 
 }
+
