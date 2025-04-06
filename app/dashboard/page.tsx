@@ -1,4 +1,5 @@
 import { signOut } from "@/auth"
+import { sendPDF } from "../lib/actions";
 import DynamicBox from "@/app/components/dynamic-box"
 export default function Dashboard() {
     return (
@@ -27,6 +28,11 @@ export default function Dashboard() {
             </div>
 
             <DynamicBox />
+
+            <form action={sendPDF}>
+                <input type="file" name="pdf-importer" id="pdf-importer" />
+                <button> Submit me. </button>
+            </form>
 
 
         </div>
