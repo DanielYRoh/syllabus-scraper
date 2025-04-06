@@ -55,6 +55,32 @@ export async function createUser(formData : FormData) :  Promise<boolean | undef
       
 }
 
+export async function addPDF(username: string, pdf: string){
+  try{
+    await sql`
+  UPDATE syllabi
+  SET data = JSON_MODIFY(data, 'append $.arrayPath', ${pdf})
+  WHERE username = ${username}
+`;
+  } catch (error) {
+    console.error('Error executing query:', error);
+  }
+}
+
+export async function getPDFS(username: string) : Promise<any | undefined> {
+  try {
+    const result = await sql`
+      SELECT data
+      FROM syllabi
+      WHERE username = ${username}
+    `;
+  
+    return result
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+  }
+  
+}
 
 export const { auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -80,4 +106,5 @@ export const { auth, signIn, signOut } = NextAuth({
         }),
 
     ],
+    
 });
