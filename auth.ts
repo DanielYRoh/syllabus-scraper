@@ -6,19 +6,9 @@ import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
-
+ 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-
-const UserSchema = z.object({
-  id: z.string().optional(),
-  username: z.string(),
-  name: z.string(),
-  password: z.string().min(6),
-});
-
-const CreateUser = UserSchema.omit({ id: true })
-
+ 
 async function getUser(username: string): Promise<User | undefined> {
   try {
     const user = await sql<User[]>`SELECT * FROM users WHERE username=${username}`;
@@ -29,52 +19,28 @@ async function getUser(username: string): Promise<User | undefined> {
   }
 }
 
-export async function createUser(formData: FormData): Promise<boolean | undefined> {
-  const { name, username, password } = CreateUser.parse({
-    name: formData.get("name"),
-    username: formData.get("username"),
-    password: formData.get("password"),
-  })
-
-  if (password.length < 6) {
-    throw new Error("Password must be at least 6 characters long.")
-  } else {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-      await sql`
-    INSERT INTO users (name, username, password)
-    VALUES (${name}, ${username}, ${hashedPassword})
-    `;
-      return true;
-    } catch (error) {
-      throw new Error("Username already exists. Please select another one.")
-    }
-  }
-}
-
 export const { auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      async authorize(credentials) {
-        const parsedCredentials = z.object({
-          username: z.string(), password: z.string().min(6)
-        }).safeParse(credentials);
+    ...authConfig,
+    providers: [
+        Credentials({
+            async authorize(credentials) {
+                const parsedCredentials = z.object({
+                    username: z.string(), password: z.string().min(6)
+                }).safeParse(credentials);
+                
+                if (parsedCredentials.success) {
+                    const { username, password } = parsedCredentials.data;
+                    const user = await getUser(username);
+                    if (!user) return null;
+                    const passwordsMatch = await bcrypt.compare(password, user.password);
+                      console.log(username, passwordsMatch)
+                    if (passwordsMatch) return user;
+                }
+                console.log(parsedCredentials.error)
+                console.log("invalid credentials.")
+                return null;
+            },
+        }),
 
-        if (parsedCredentials.success) {
-          const { username, password } = parsedCredentials.data;
-          const user = await getUser(username);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          console.log(username, passwordsMatch)
-          if (passwordsMatch) return user;
-        }
-        console.log(parsedCredentials.error)
-        console.log("invalid credentials.")
-        return null;
-      },
-    }),
-
-  ],
+    ],
 });

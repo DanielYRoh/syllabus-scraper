@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn, createUser } from "@/auth";
+import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import postgres from "postgres";
 import bcryptjs from "bcryptjs";
@@ -8,6 +8,17 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+
+const UserSchema = z.object({
+    id: z.string().optional(),
+    username: z.string(),
+    name: z.string(),
+    password: z.string().min(6),
+});
+
+const CreateUser = UserSchema.omit({ id: true })
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
@@ -27,26 +38,21 @@ export async function authenticate(
     }
 }
 
-export async function sendPDF(formData: FormData) {
-    const PDF_file = formData.get("pdf-importer") as File;
-    const sendFormData = new FormData();
-    sendFormData.append('file', PDF_file)
-    const response = await fetch("https://3186-130-212-146-53.ngrok-free.app", {
-        method: 'POST',
-        body: sendFormData,
-    });
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json(); // Parse JSON response
-    console.log('Success:', data);
-}
-
 export async function newUser(prevState: string | undefined, formData: FormData) {
+    const { name, username, password } = CreateUser.parse({
+        name: formData.get("name"),
+        username: formData.get("username"),
+        password: formData.get("password"),
+    })
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    await sql`
+    INSERT INTO users (name, username, password)
+    VALUES (${name}, ${username}, ${hashedPassword})
+    ON CONFLICT (username) DO NOTHING;
+    `;
 
     try {
-        await createUser(formData);
         await signIn('credentials', formData);
     } catch (error) {
         if (error instanceof AuthError) {
@@ -56,10 +62,10 @@ export async function newUser(prevState: string | undefined, formData: FormData)
                 default:
                     return 'Something went wrong.';
             }
-        } else if (error instanceof Error) {
-            return error.message;
         }
+        throw error;
     }
+
 
 
 }

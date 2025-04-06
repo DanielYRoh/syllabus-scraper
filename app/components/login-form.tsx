@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from 'react';
-import { authenticate } from '@/app/lib/actions';
+import { authenticate } from '@/lib/actions';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -24,7 +24,7 @@ export default function () {
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm text-gray-100">
                         <form action={formAction} className="space-y-6">
                             <div>
-                                <label htmlFor="username" className="block text-sm/6 font-medium text-gray-500">Username</label>
+                                <label htmlFor="username" className="block text-sm/6 font-medium text-gray-500">Student ID</label>
                                 <div className="mt-2">
                                     <input type="text" name="username" id="studentid" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
                                 </div>
@@ -32,9 +32,7 @@ export default function () {
 
                             <div>
                                 <div className="flex items-center justify-between">
-                                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-500">
-                                        Password
-                                    </label>
+                                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-500">Password</label>
                                     <div className="text-sm">
                                         <a href="#" className="font-semibold text-[#047ac0] hover:text-blue-600">Forgot password?</a>
                                     </div>
