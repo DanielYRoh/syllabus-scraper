@@ -74,10 +74,10 @@ export default function DynamicBox ({ item, index}: { item: string, index: numbe
       <div className="flex items-center flex-col justify-center h-[120px] bg-gray-100 rounded-lg mb-4">
       <button className="text-xl font-bold  text-gray-700">{info.course_name}</button>
       {
-        info.instructor[0] ? (
+        info.instructor ?  (
           <div>
-            <p className="italic ">{info.instructor[0].name}</p>
-            <a href={`mailto:${info.instructor[0].email}`}>{info.instructor[0].email}</a>
+            <p className="italic ">{info.instructor[0] ? info.instructor[0].name:""}</p>
+            <a href={`mailto:${info.instructor[0] ? info.instructor[0].email:""}`}>{info.instructor[0] ? info.instructor[0].email:""}</a>
           </div>
         ) : ""
       }
@@ -91,19 +91,19 @@ export default function DynamicBox ({ item, index}: { item: string, index: numbe
       
       <p className='text-xl mt-10 font-bold'> Deadlines</p>
       {
-          info.deadlines.map((val, index) => (
+          info.deadlines && info.deadlines.length > 0? info.deadlines.map((val, index) => (
             <div key={index} className="grid justify-between items-center p-2 border-b">
               <p>{val.type}</p>
               <p>{val.date}</p>
               <p>{val.description}</p>
             </div>
-          ))
+          )) : ""
       }
 
 <p className='text-xl mt-10 font-bold'> Grading Policy</p>
 
         { 
-          info.grading_policy[0] ? (<PieChart
+          info.grading_policy && info.grading_policy.length > 0?  (<PieChart
             series={[
               {
                 data: [

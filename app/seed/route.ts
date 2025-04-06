@@ -1,33 +1,22 @@
-import bcryptjs from 'bcryptjs';
 import postgres from 'postgres';
-
-
-import { test_user } from '../lib/placeholder_data';
+import { NextResponse } from 'next/server';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-
-async function seedUsers() {
-    await sql`
-    CREATE DATABASE syllabi;
-
-    CREATE TABLE IF NOT EXISTS syllabi.json_data (
-      username TEXT NOT NULL UNIQUE,
-      data JSONB NOT NULL
-    );
-  `;
-}
-
-
 export async function GET() {
     try {
-        const result = await sql.begin((sql) => [
-            seedUsers(),
-        ]);
+        await sql.begin(async (sql) => {
+            await sql`
+                CREATE TABLE IF NOT EXISTS syllabi (
+                    username TEXT NOT NULL UNIQUE,
+                    data JSONB NOT NULL
+                );
+            `;
+        });
 
-
-        return Response.json({ message: 'Database seeded successfully' });
+        return NextResponse.json({ message: 'Database seeded successfully' });
     } catch (error) {
-        return Response.json({ error }, { status: 500 });
+        console.error('Error seeding database:', error);
+        return NextResponse.json({error}, { status: 500 });
     }
 }

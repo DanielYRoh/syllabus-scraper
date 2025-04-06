@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, createUser, signOut } from "@/auth";
+import { signIn, createUser, signOut, addPDF, getPDFS } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function authenticate(
@@ -33,7 +33,7 @@ export async function sendPDF(previousState: string | undefined, formData: FormD
     const sendFormData = new FormData()
     sendFormData.append('file', userPDF)
 
-    
+
 
     try {
         const response = await fetch("https://2e95-130-212-147-97.ngrok-free.app/extract-pdf", {
@@ -44,12 +44,29 @@ export async function sendPDF(previousState: string | undefined, formData: FormD
             throw new Error("HTTP ERROR!")
         }
         const data = await response.json();
-        return JSON.stringify(data)
+        const stringData  =  JSON.stringify(data)
+        await addPDF(username, stringData);
+
+        return stringData
 
     } catch (error){
         console.error(error)
     }
 
+}
+export async function getSavedPDFs(prevState: string | undefined, formData: FormData) {
+    const username = await formData.get("username") as string;
+
+    try{
+        const userData = await getPDFS(username);
+        const arr = []
+        for (const data of userData) {
+            arr.push(JSON.stringify(data.data[0]));
+        }
+        return JSON.stringify(userData)
+    } catch (error){
+        throw error;
+    }
 }
 
 export async function newUser(prevState: string | undefined, formData: FormData) {

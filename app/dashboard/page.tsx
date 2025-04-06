@@ -1,7 +1,7 @@
 "use client"
 
 import { signOutHelper } from "@/lib/actions";
-import { sendPDF } from "@/lib/actions";
+import { sendPDF, getSavedPDFs } from "@/lib/actions";
 import DynamicBox from "@/app/components/dynamic-box"
 import Navbar from "../components/navbar";
 
@@ -16,12 +16,24 @@ export default function Dashboard() {
         sendPDF,
         undefined,
     );
+    const [thing, userAction, pending] = useActionState(
+        getSavedPDFs,
+        undefined,
+    );
     useEffect(() => {
         if (isInitialRender.current) {
             isInitialRender.current = false; return;
         }
         setSyllabi((prev) => [...prev, state ?? ""])
     }, [state])
+    useEffect(()=> {
+        if (!thing) return;
+        const data = JSON.parse(thing ?? "{}")[0].data;
+        console.log(data)
+        for (const entry of data){
+            setSyllabi((prev) => [...prev, JSON.stringify(entry) ?? ""])
+        }
+    }, [thing])
 
     const formRef = useRef(null);
 
@@ -29,6 +41,13 @@ export default function Dashboard() {
     return (
         <div>
             <Navbar />
+            <div className="flex justify-center mt-20 mb-20">
+            <form action={userAction}>
+                    <p> Fetch your previous syllabi!</p>
+                <input type="text" placeholder="Add Username here..." name="username" id="studentid" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                <button className="border-white bg-[#047ac0] text-white text-center font-bold px-4 py-2 mt-2 w-full mx-auto block rounded hover:bg-blue-600 transition border-2 ">Submit</button>
+                </form>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
             <form ref={formRef} action={formAction}>
@@ -42,10 +61,12 @@ export default function Dashboard() {
                         
                     </div>
                     <input id="dropzone-file" type="file" className="hidden" name="dropzone-file"/>
+                    
                     <input type="text" placeholder="Add Username here..." name="username" id="studentid" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
                 </label>
                 <button className="border-white bg-[#047ac0] text-white text-center font-bold px-4 py-2 mt-2 w-full mx-auto block rounded hover:bg-blue-600 transition border-2 ">Upload</button>
             </form>
+
             {
                 syllabi.map((val, index) => ( val.length > 0 ?
                     <DynamicBox item={val} index={index} key={index}/> : ""
