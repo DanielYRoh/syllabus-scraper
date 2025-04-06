@@ -51,12 +51,6 @@ const DynamicBox: React.FC = () => {
                 >
                   Send Email
                 </button>
-                <button
-                  onClick={() => alert(`Option 2 for ${box}`)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                >
-                  Google Calendar
-                </button>
               </div>
             )}
           </div>
