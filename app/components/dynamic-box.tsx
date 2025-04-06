@@ -9,6 +9,11 @@ const DynamicBox: React.FC = () => {
     setBoxes([...boxes, `Box ${boxes.length + 1}`]);
   };
 
+  const handleDeleteBox = (indexToDelete: number) => {
+    const updatedBoxes = boxes.filter((_, i) => i !== indexToDelete);
+    setBoxes(updatedBoxes);
+  };
+
   return (
     <div>
       <button
@@ -25,6 +30,12 @@ const DynamicBox: React.FC = () => {
             className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
           >
             <h2 className="text-sm font-medium text-gray-700">{box}</h2>
+            <button
+              onClick={() => handleDeleteBox(index)}
+              className="relative bottom-5 left-48 px-2 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
+            >
+                ✕
+            </button>
           </div>
         ))}
       </div>
